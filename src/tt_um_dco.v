@@ -49,7 +49,7 @@ module tt_um_dco (
     reg [3:0] fast_clk_div;
     wire resetn = ~rst_n;
     
-    // Compute period based on coarse control bits (example mapping)
+   
     always @(*) begin
         casez (coarse)
             8'b1???????: period = 8'd10;
