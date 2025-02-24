@@ -55,11 +55,11 @@ module tb ();
   
   initial begin
     clk = 0;
-    reset = 1;
+    rst_n = 1;
     ena = 0;
     dco_code = 8'b00000000;
     
-    #10 reset = 0; ena = 1;
+    #10 rst_n = 0; ena = 1;
     #4000 dco_code = 8'b00000001;
     #4000 dco_code = 8'b00000010;
     #4000 dco_code = 8'b00000100;
@@ -69,8 +69,8 @@ module tb ();
     #4000 dco_code = 8'b01000000;
     #4000 dco_code = 8'b10000000;
     
-    #10 reset = 1;
-    #10 reset = 0;
+    #10 rst_n = 1;
+    #10 rst_n = 0;
     
     #2000 $finish;
   end
