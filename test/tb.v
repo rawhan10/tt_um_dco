@@ -4,7 +4,7 @@
 /* This testbench just instantiates the module and makes some convenient wires
    that can be driven / tested by the cocotb test.py.
 */
-module tb ();
+module dco_tb ();
 
   // Dump the signals to a VCD file. You can view it with gtkwave or surfer.
   initial begin
@@ -45,5 +45,34 @@ module tb ();
       .clk    (clk),      // clock
       .rst_n  (rst_n)     // not reset
   );
+
+   reg [7:0] dco_code;
+     wire dco_out;
+
+   assign ui_in = dco_code;
+   assign uo_out = dco_out;
+    always #10 clk = ~clk;
+  
+  initial begin
+    clk = 0;
+    reset = 1;
+    ena = 0;
+    dco_code = 8'b00000000;
+    
+    #10 reset = 0; ena = 1;
+    #4000 dco_code = 8'b00000001;
+    #4000 dco_code = 8'b00000010;
+    #4000 dco_code = 8'b00000100;
+    #4000 dco_code = 8'b00001000;
+    #4000 dco_code = 8'b00010000;
+    #4000 dco_code = 8'b00100000;
+    #4000 dco_code = 8'b01000000;
+    #4000 dco_code = 8'b10000000;
+    
+    #10 reset = 1;
+    #10 reset = 0;
+    
+    #2000 $finish;
+  end
 
 endmodule
