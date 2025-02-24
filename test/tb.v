@@ -1,6 +1,6 @@
-`default_nettype none
-`timescale 1ns / 1ps
 
+`timescale 1ns / 1ps
+`default_nettype none
 module tb ();
 
   // Dump the signals to a VCD file. You can view it with gtkwave or surfer.
