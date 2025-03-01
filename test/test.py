@@ -19,9 +19,9 @@ async def test_project(dut):
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
-    dut.rst_n.value = 1
-    await ClockCycles(dut.clk, 200)
     dut.rst_n.value = 0
+    await ClockCycles(dut.clk, 1)
+    dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
 
@@ -30,7 +30,7 @@ async def test_project(dut):
     # dut.uio_in.value = 30
 
     # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 95)
+    await ClockCycles(dut.clk, 5)
 
     # The following assersion is just an example of how to check the output values.
     # Change it to match the actual expected output of your module:
