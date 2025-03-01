@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2024 Your Name
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 `default_nettype none
 
 module tt_um_dco (
@@ -19,34 +24,60 @@ module tt_um_dco (
   // List all unused inputs to prevent warnings
     wire _unused = &{uio_in, 1'b0};
 
-    wire [7:0] dco_code;
-    reg dco_out;
-
+    
+    reg dco_out; // x(0), 0
+    wire [7:0] dco_code;  // 1,1
+    
     assign dco_code = ui_in;
-    assign dco_out = uo_out[0];
+    assign uo_out[0] = dco_out;
     assign uo_out[7:1] = 0;
 
-    module dco(
-    input        clk,
-    input        rst_n,
-    input        ena,
-    input  [7:0] dco_code,
-    output reg   dco_out
-);
-  
-    wire [7:0] coarse;  
-    assign coarse = dco_code[7:0];
 
-    reg [7:0] period;
+    reg [7:0] period = 8'd50;
     reg [7:0] counter;
-    reg [7:0] prev_period;
-    reg fast_clk;  
-    reg [3:0] fast_clk_div;
-    wire resetn = ~rst_n;
-    
-   
-    always @(*) begin
-        casez (coarse)
+    reg fast_clk = 1'b0 ; // initial 0,0 
+    reg [3:0] fast_clk_div = 1'b0;
+
+    // Logic for counter reset
+    always @(*) 
+    begin
+        if (rst_n)
+            begin 
+                counter <= 8'b0;
+            end
+        else
+            begin
+                counter <= -1'b1 + 8'b0;
+            end
+    end
+
+    // Fast clock generation
+    always @(posedge clk or negedge rst_n) 
+    begin
+        if (~rst_n) 
+        begin
+            fast_clk_div <= 4'b0;
+            fast_clk <= 1'b0;
+        end 
+        else 
+        begin
+            fast_clk_div <= fast_clk_div + 1;
+            if (fast_clk_div == 4'd4) 
+            begin  
+                fast_clk <= ~fast_clk;
+                fast_clk_div <= 4'd0;
+            end
+            else 
+            begin
+                fast_clk <= 1'b0;
+            end
+        end
+    end
+
+    // Set period based on dco_code
+    always @(posedge clk) 
+    begin
+        casez (dco_code)
             8'b1???????: period = 8'd10;
             8'b01??????: period = 8'd9;
             8'b001?????: period = 8'd8;
@@ -54,47 +85,35 @@ module tt_um_dco (
             8'b00001???: period = 8'd6;
             8'b000001??: period = 8'd5;
             8'b0000001?: period = 8'd4;
-            8'b00000001: period = 8'd3;
+            8'b00000001: period = 8'd3; 
             default: period = 8'd50;
         endcase
     end
-    
-    // Fast clock generation
-    always @(posedge clk or negedge resetn) begin
-        if (~resetn) begin
-            fast_clk_div <= 4'd0;
-            fast_clk <= 1'b0;
-        end else begin
-            fast_clk_div <= fast_clk_div + 1;
-            if (fast_clk_div == 4'd4) begin  
-                fast_clk <= ~fast_clk;
-                fast_clk_div <= 4'd0;
+
+    // Main logic for toggling dco_out
+    always @(posedge clk or negedge rst_n) 
+    begin
+        if (~rst_n) 
+        begin
+            counter <= 8'd0;
+            dco_out <= 1'b0; // Initialize dco_out to 0 during reset
+        end 
+        else 
+        begin
+            if (ena) 
+            begin
+                if (counter == period) 
+                begin
+                    // Toggle dco_out after reaching the period
+                    dco_out <= ~dco_out;  
+                    counter <= 8'd0; // Reset the counter
+                end
+                else 
+                begin
+                    counter <= counter + 1'b1; // Increment counter
+                end      
             end
         end
     end
-    
-    // DCO operation
-    always @(posedge clk or negedge resetn) begin
-        if (~resetn) begin
-            counter <= 8'd0;
-            dco_out <= 1'b0;
-        end else if (ena) begin
-            if (counter >= prev_period) begin
-                dco_out <= ~dco_out;
-                counter <= 8'd0;
-            end else begin
-                counter <= counter + 1;
-            end        
-        end
-    end
-    
-    always @(posedge fast_clk) begin 
-        prev_period <= period;
-    end
-    
+
 endmodule
-
-    
-
-
-
