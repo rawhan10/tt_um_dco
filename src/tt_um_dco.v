@@ -38,10 +38,12 @@ module tt_um_dco (
     reg fast_clk = 1'b0 ; // initial 0,0 
     reg [3:0] fast_clk_div = 1'b0;
 
+    wire resetnn = ~rst_n;
+    
     // Logic for counter reset
     always @(*) 
     begin
-        if (rst_n)
+        if (resetnn)
             begin 
                 counter <= 8'b0;
             end
@@ -52,9 +54,9 @@ module tt_um_dco (
     end
 
     // Fast clock generation
-    always @(posedge clk or negedge rst_n) 
+    always @(posedge clk or negedge resetnn) 
     begin
-        if (~rst_n) 
+        if (~resetnn) 
         begin
             fast_clk_div <= 4'b0;
             fast_clk <= 1'b0;
@@ -91,9 +93,9 @@ module tt_um_dco (
     end
 
     // Main logic for toggling dco_out
-    always @(posedge clk or negedge rst_n) 
+    always @(posedge clk or negedge resetnn) 
     begin
-        if (~rst_n) 
+        if (~resetnn) 
         begin
             counter <= 8'd0;
             dco_out <= 1'b0; // Initialize dco_out to 0 during reset
