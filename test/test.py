@@ -8,7 +8,9 @@ from cocotb.triggers import Timer
 
 @cocotb.test()
 async def test_project(dut):
+    
     dut._log.info("Start")
+    dut.clk.value = 1
 
     # Set the clock period to 10 us (100 KHz)
     clock = Clock(dut.clk, 20, units="ns")
