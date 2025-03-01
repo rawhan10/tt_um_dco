@@ -101,7 +101,7 @@ module tt_um_dco (
         end 
         else 
         begin
-            if (en) 
+            if (ena) 
             begin
                 if (counter == period) 
                 begin
