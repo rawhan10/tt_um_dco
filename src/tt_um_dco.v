@@ -97,7 +97,7 @@ module tt_um_dco (
     begin
         if (~resetnn) 
         begin
-            counter <= 8'd0;
+            counter <= 8'b0;
             dco_out <= 1'b0; // Initialize dco_out to 0 during reset
         end 
         else 
@@ -108,7 +108,7 @@ module tt_um_dco (
                 begin
                     // Toggle dco_out after reaching the period
                     dco_out <= ~dco_out;  
-                    counter <= 8'd0; // Reset the counter
+                    counter <= 8'b0; // Reset the counter
                 end
                 else 
                 begin
