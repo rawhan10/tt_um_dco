@@ -40,17 +40,17 @@ module tt_um_dco (
 
     // wire rst_n = ~rst_n;
     
-    always @(*) 
-    begin
-        if (rst_n)
-            begin 
-                counter <= 8'b0;
-            end
-        else
-            begin
-                counter <= -1'b1 + 8'b0;
-            end
-    end
+    // always @(*) 
+    // begin
+    //     if (rst_n)
+    //         begin 
+    //             counter <= 8'b0;
+    //         end
+    //     else
+    //         begin
+    //             counter <= -1'b1 + 8'b0;
+    //         end
+    // end
 
     // Fast clock generation
     always @(posedge clk or negedge rst_n) 
@@ -111,7 +111,7 @@ module tt_um_dco (
                 end
                 else 
                 begin
-                    counter <= counter + 1'b1; // Increment counter
+                    counter <= counter + 8'b1; // Increment counter
                 end      
             end
         end
