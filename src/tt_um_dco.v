@@ -40,7 +40,6 @@ module tt_um_dco (
 
     // wire rst_n = ~rst_n;
     
-    // Logic for counter reset
     always @(*) 
     begin
         if (rst_n)
@@ -58,7 +57,7 @@ module tt_um_dco (
     begin
         if (~rst_n) 
         begin
-            fast_clk_div <= 4'b0;
+            fast_clk_div <= 4'd0;
             fast_clk <= 1'b0;
         end 
         else 
@@ -97,18 +96,18 @@ module tt_um_dco (
     begin
         if (~rst_n) 
         begin
-            counter <= 8'b0;
+            counter <= 8'd0;
             dco_out <= 1'b0; // Initialize dco_out to 0 during reset
         end 
         else 
         begin
-            if (ena) 
+            if (en) 
             begin
                 if (counter == period) 
                 begin
                     // Toggle dco_out after reaching the period
                     dco_out <= ~dco_out;  
-                    counter <= 8'b0; // Reset the counter
+                    counter <= 8'd0; // Reset the counter
                 end
                 else 
                 begin
