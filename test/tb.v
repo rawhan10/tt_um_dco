@@ -1,12 +1,12 @@
 `default_nettype none
-`timescale 1ns / 1ps
+`timescale 1ns / 1ps 
 
 /* This testbench just instantiates the module and makes some convenient wires
    that can be driven / tested by the cocotb test.py.
 */
 module tb ();
 
-  // Dump the signals to a VCD file. You can view it with gtkwave.
+  // Dump the signals to a VCD file. You can view it with gtkwave or surfer.
   initial begin
     $dumpfile("tb.vcd");
     $dumpvars(0, tb);
@@ -17,21 +17,25 @@ module tb ();
   reg clk;
   reg rst_n;
   reg ena;
+	reg [7:0] dco_code;
+	reg dco_out;
+  
   wire [7:0] ui_in;
-  wire [7:0] uio_in;
-  reg [7:0] ui_in_reg;
-  reg [7:0] uio_in_reg;
   wire [7:0] uo_out;
-  wire [7:0] uio_out;
-  wire [7:0] uio_oe;
+  wire [7:0] uio_in, uio_out, uio_oe;
+
+	`ifdef GL_TEST
+   supply1 VPWR; // Define VPWR as a logic '1'
+   supply0 VGND; // Define VGND as a logic '0'
+   `endif
 
   // Replace tt_um_example with your module name:
   tt_um_dco user_project (
 
       // Include power ports for the Gate Level test:
 `ifdef GL_TEST
-      .VPWR(1'b1),
-      .VGND(1'b0),
+      .VPWR(VPWR),
+      .VGND(VGND),
 `endif
 
       .ui_in  (ui_in),    // Dedicated inputs
@@ -41,21 +45,20 @@ module tb ();
       .uio_oe (uio_oe),   // IOs: Enable path (active high: 0=input, 1=output)
       .ena    (ena),      // enable - goes high when design is selected
       .clk    (clk),      // clock
-      .rst_n  (rst_n)     // not reset
+	  .rst_n  (rst_n)     // not reset
   );
- reg [7:0] dco_code;  
-
-  always @(*) ui_in = dco_code; // Fixed wire assignment issue
-  always #10 clk = ~clk;
+assign ui_in = dco_code;
+	assign uo_out = dco_out;
+always #10 clk = ~clk;
   
   initial begin
-    clk = 0;
-    rst_n = 1;
-    ena = 0;
-    dco_code = 8'b00000000;
+    clk = 1;
+    rst_n = 0;
+    ena = 1;
+    dco_code = 8'b00000001;
     
-    #10 rst_n = 0; ena = 1;
-    #4000 dco_code = 8'b00000001;
+      #20 rst_n = 1; ena = 1;
+    // #400 dco_code = 8'b00000001;
     #4000 dco_code = 8'b00000010;
     #4000 dco_code = 8'b00000100;
     #4000 dco_code = 8'b00001000;
@@ -64,15 +67,14 @@ module tb ();
     #4000 dco_code = 8'b01000000;
     #4000 dco_code = 8'b10000000;
     
-    #10 rst_n = 1;
-    #10 rst_n = 0;
+//    #10 reset = 1;
+//    #10 reset = 0;
     
-    #2000 $finish;
+    #60000 $finish;
   end
-  
-  initial 
-   begin
-      $monitor("Time=%0d | ui_in=%b, uo_out=%b | reset=%b | clk=%b", $time, ui_in,  uo_out, rst_n, clk);
-   end
+initial begin
+    $monitor("Time=%0t | ui_in=%b, uo_out=%b | reset=%b | clk=%b",
+             $time, ui_in, uo_out, rst_n, clk);
+  end
 
 endmodule
