@@ -4,7 +4,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
-
+from cocotb.triggers import Timer
 
 @cocotb.test()
 async def test_project(dut):
@@ -20,7 +20,7 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 1)
+    await Timer(20, units="ns")
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")
