@@ -57,7 +57,7 @@ always #10 clk = ~clk;
     ena = 1;
     dco_code = 8'b00000001;
     
-      #200 rst_n = 1; ena = 1;
+      #20 rst_n = 1; ena = 1;
     // #400 dco_code = 8'b00000001;
     #4000 dco_code = 8'b00000010;
     #4000 dco_code = 8'b00000100;
