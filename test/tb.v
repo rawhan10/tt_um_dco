@@ -18,7 +18,7 @@ module tb ();
   reg rst_n;
   reg ena;
 	reg [7:0] dco_code;
-	reg dco_out;
+	wire dco_out;
   
   wire [7:0] ui_in;
   wire [7:0] uo_out;
