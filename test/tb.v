@@ -57,16 +57,16 @@ always #10 clk = ~clk;
     ena = 1;
     dco_code = 8'b00000001;
     
-      #20 rst_n = 0; ena = 1;
+      #20000 rst_n = 0; ena = 1;
     // #400 dco_code = 8'b00000001;
-    #4000 dco_code = 8'b00000010;
-    #4000 dco_code = 8'b00000100;
-    #4000 dco_code = 8'b00001000;
-    #4000 dco_code = 8'b00010000;
-    #4000 dco_code = 8'b00100000;
-    #4000 dco_code = 8'b01000000;
-    #4000 dco_code = 8'b10000000;
-    
+    // #4000 dco_code = 8'b00000010;
+    // #4000 dco_code = 8'b00000100;
+    // #4000 dco_code = 8'b00001000;
+    // #4000 dco_code = 8'b00010000;
+    // #4000 dco_code = 8'b00100000;
+    // #4000 dco_code = 8'b01000000;
+    // #4000 dco_code = 8'b10000000;
+    // #19980 rst_n = 
 //    #10 reset = 1;
 //    #10 reset = 0;
     
